@@ -19,20 +19,23 @@ pipeline {
         }
         stage('Manual Approval') {
             steps {
-                input message: 'Lanjutkan ke tahap Deploy?', 
-                    parameters: 
-                    [
-                        [$class: 'ChoiceParameter', 
-                        name: 'ACTION', 
-                        choices: ['Proceed', 'Abort'],
-                        description: 'Pilih opsi untuk melanjutkan atau menghentikan eksekusi pipeline.']
-                    ]
+                script {
+                    def userInput = input(
+                        message: 'Lanjutkan ke tahap Deploy?',
+                        parameters: [
+                            [$class: 'BooleanParameterDefinition',
+                             defaultValue: true,
+                             description: 'Pilih opsi untuk melanjutkan atau menghentikan eksekusi pipeline.',
+                             name: 'CONTINUE']
+                        ]
+                    )
+                    if (!userInput.CONTINUE) {
+                        error('Pipeline execution aborted by user.')
+                    }
+                }
             }
         }
         stage('Deploy') {
-            when {
-                expression { params.ACTION == 'Proceed' }
-            }
             steps {
                 sh './jenkins/scripts/deliver.sh'
                 sleep 60
@@ -41,6 +44,7 @@ pipeline {
         }
     }
 }
+
 
 
 
