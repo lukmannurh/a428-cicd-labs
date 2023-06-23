@@ -7,9 +7,11 @@ pipeline {
         }
     }
     parameters {
-        extendedChoice description: 'Pilih apakah ingin melanjutkan atau menghentikan eksekusi pipeline',
-            multiSelectDelimiter: ',', name: 'APPROVAL', quoteValue: false, saveJSONParameterToFile: false,
-            type: 'PT_SINGLE_SELECT', value: 'Abort\nProceed'
+        choice(
+            choices: ['Abort', 'Proceed'],
+            description: 'Pilih apakah ingin melanjutkan atau menghentikan eksekusi pipeline',
+            name: 'APPROVAL'
+        )
     }
     stages {
         stage('Build') {
@@ -24,7 +26,9 @@ pipeline {
         }
         stage('Manual Approval') {
             steps {
-                input message: 'Lanjutkan ke tahap Deploy?', submitter: 'user', parameters: [choice(name: 'APPROVAL', description: '')]
+                input message: 'Lanjutkan ke tahap Deploy?', submitter: 'user', parameters: [
+                    choice(name: 'APPROVAL', choices: ['Abort', 'Proceed'])
+                ]
             }
         }
         stage('Deploy') {
@@ -32,15 +36,16 @@ pipeline {
                 expression { params.APPROVAL == 'Proceed' }
             }
             steps {
-                sh './jenkins/scripts/deliver.sh' 
-                timeout(time: 1, unit: 'MINUTES') {
-                    input message: 'Sudah selesai menggunakan React App? (Klik "Proceed" untuk mengakhiri)' 
+                sh './jenkins/scripts/deliver.sh'
+                script {
+                    sleep(time: 60, unit: 'SECONDS')
                 }
-                sh './jenkins/scripts/kill.sh' 
+                sh './jenkins/scripts/kill.sh'
             }
         }
     }
 }
+
 
 
 
