@@ -6,13 +6,13 @@ pipeline {
             args '-p 3000:3000'
         }
     }
-    parameters {
-        choice(
-            choices: ['Abort', 'Proceed'],
-            description: 'Pilih apakah ingin melanjutkan atau menghentikan eksekusi pipeline',
-            name: 'APPROVAL'
-        )
-    }
+    // parameters {
+    //     choice(
+    //         choices: ['Abort', 'Proceed'],
+    //         description: 'Pilih apakah ingin melanjutkan atau menghentikan eksekusi pipeline',
+    //         name: 'APPROVAL'
+    //     )
+    // }
     stages {
         stage('Build') {
             steps {
