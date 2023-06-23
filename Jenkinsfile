@@ -36,6 +36,9 @@ pipeline {
             }
         }
         stage('Deploy') {
+            when {
+                expression { params.ACTION == 'Proceed' }
+            }
             steps {
                 sh './jenkins/scripts/deliver.sh'
                 sleep 60
@@ -44,7 +47,6 @@ pipeline {
         }
     }
 }
-
 
 
 
