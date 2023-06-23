@@ -33,7 +33,7 @@ pipeline {
         }
         stage('Deploy') {
             when {
-                expression { params.APPROVAL == 'Proceed' }
+        expression { params.APPROVAL == 'Proceed' }
             }
             steps {
                 sh './jenkins/scripts/deliver.sh'
@@ -43,6 +43,7 @@ pipeline {
                 sh './jenkins/scripts/kill.sh'
             }
         }
+
     }
 }
 
