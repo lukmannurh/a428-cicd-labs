@@ -21,15 +21,17 @@ pipeline {
             steps {
                 script {
                     def userInput = input(
+                        id: 'userInput',
                         message: 'Lanjutkan ke tahap Deploy?',
                         parameters: [
-                            [$class: 'BooleanParameterDefinition',
-                             defaultValue: true,
-                             description: 'Pilih opsi untuk melanjutkan atau menghentikan eksekusi pipeline.',
-                             name: 'CONTINUE']
+                            booleanParam(
+                                defaultValue: true,
+                                description: 'Pilih opsi untuk melanjutkan atau menghentikan eksekusi pipeline.',
+                                name: 'CONTINUE'
+                            )
                         ]
                     )
-                    if (!userInput.CONTINUE) {
+                    if (!userInput) {
                         error('Pipeline execution aborted by user.')
                     }
                 }
